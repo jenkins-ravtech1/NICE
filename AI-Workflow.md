@@ -164,18 +164,18 @@ Removal of @niceltd/cxone-domain-components and (if present) @niceltd/sol is inc
 ## Development Workflow (IDE Only)
 
 1. **New chat.**
-2. `@sm create-next-story <STORY_NUMBER>`
+2. `@sm create-next-story`
 3. READ the story content.
 4. Change status to **Approved**.
 5. **New chat.**
-6. `@dev implement-story <STORY_NUMBER>`
-7. In the same chat, write:
+6. `@dev implement-story`
+7. In the same chat, write the below prompt:
 
-       Perform a thorough search and confirm that all instances of the component have been fully migrated`.
+       Perform a thorough search and confirm that all instances of the component have been fully migrated.
 
 8. Check in the story `.md` file that **all tasks are checked**.
 9. **New chat.**
-10. `@qa review-story <STORY_NUMBER>`
+10. `@qa review-story`
 11. **IMPORTANT** Check that all unit tests passed successfully.
 12. **The status of the story must be Done** _OR_ write:
 
