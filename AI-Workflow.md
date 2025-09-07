@@ -1,5 +1,8 @@
 # AI Workflow
 
+## Pre-planning
+Run the app, the unit tests and the e2e to check if all works well.
+
 ## Planning Phase Steps
 
 1. Clone **3 repositories**.
