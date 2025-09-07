@@ -30,127 +30,118 @@ Installer Choices:
 
 `@analyst create-project-brief` (paste the prompt below)
 ```
-We are migrating an Angular MFE from Breeze components to SOL components.
+CONTEXT
+- We are migrating an Angular MFE from Breeze components to SOL components.
+- SOURCES YOU MUST READ BEFORE WRITING ANYTHING:
+  1) "sol-components" — the SOL design system source (authoritative for APIs, inputs/outputs, styles, tokens).
+  2) "NICE-migration-notes" — a NOTES-ONLY repo (Markdown/snippets/checklists) capturing mappings, decisions, and gotchas from prior manual SOL migrations. This is NOT the target app repo and MUST NOT be imported or referenced as code.
+- Target application code = the CURRENT project repository you are analyzing (not "NICE-migration-notes").
+- Invariants: Module Federation architecture stays as is. Backend APIs and business logic remain unchanged.
 
-The workspace includes two local repositories named sol-components and NICE that provides the SOL design system and migrating instructions. You MUST look at these two local repositories before writing any code.
+USING THE NOTES (MANDATORY)
+- Extract stable rules: confirmed component mappings, required style imports, known event/name changes (e.g., buttonClick), selector patterns, and common pitfalls.
+- Conflict resolution order: 1) sol-components API/docs, 2) current app code behavior, 3) NICE-migration-notes. If a conflict exists, flag it in "Open Issues / Risks" with the exact file/heading from the notes.
+- For every adopted rule from the notes, cite the note file path and heading (relative path), e.g., docs/sol/button.md#events.
+- Convert any example selectors from the notes into robust recommendations (data-testid/ARIA roles), not brittle CSS chains.
+- Do NOT treat the notes as source code; they are guidance and conventions only.
 
-Module Federation architecture stays as is. Backend APIs and business logic remain unchanged.
+SCOPE (WHAT TO DO)
+- Enumerate every Breeze component usage and map it to its SOL replacement.
+- Specify exact import changes, template deltas, input/output handler changes, and styling includes.
+- Identify ONLY the updates required to EXISTING unit tests and Playwright E2E tests due to selector/behavior changes (no new tests).
+- Provide a safe grouping plan for incremental migration, and a per-component complexity rating (Low/Medium/High).
 
-STRICT SCOPE BOUNDARIES
+NON-GOALS (MUST NOT)
+- Do NOT propose new features, KPIs, budgets, timelines, or process/training/documentation programs (including AI tooling).
+- Do NOT add new test coverage beyond the minimum updates caused by the migration.
+- Do NOT create backup files or temporary “bridge” components.
+- Do NOT design rollback strategies, feature flags for rollback, dual-running modes, or downgrade paths. Forward-only analysis.
+- Do NOT perform synthetic performance work beyond what SOL naturally provides.
+- Do NOT run or require full accessibility audits; rely on SOL defaults.
 
-Do NOT propose new features, product KPIs, budgets, or timelines.
+GLOBAL HARD RULES
+- Completeness: confirm that ALL Breeze occurrences are accounted for—none missed.
+- Hard replacement: even raw `<button>` must become `<sol-button>`.
+- Translation module swap:
+  // Replace:
+  import { TranslationModule } from '@niceltd/cxone-components/translation'
+  // With:
+  import { TranslationModule } from '@niceltd/cxone-core-services'
+- SOL button event: `(buttonClick)` is the event, NOT `(click)`. Update handlers accordingly.
+- Toaster: use `import { ToastrManagerModule } from '@niceltd/sol/toastr';`.
+- Styles (angular.json → projects/<MY_APP>/architect/build/options/styles):
+  - node_modules/@niceltd/sol/src/styles/typefaces.css
+  - node_modules/@niceltd/sol/src/styles/sol-core.scss
+- Alias cleanup: replace `import { CheckboxModule as SolCheckboxModule } from '@niceltd/sol/checkbox'`
+  with `import { CheckboxModule } from '@niceltd/sol/checkbox'` and update usages accordingly.
+- Dropdowns: Breeze Single-Select & Multi-Select → SOL Dropdown(s) with the correct SOL inputs/outputs.
+- E2E discipline: do NOT wrap Playwright locators in try/catch; let failures surface. Prefer stable selectors (data-testid/roles).
+- Grid/virtualization: call out specs impacted by virtualization; provide `rowBuffer` guidance and when a local Chromium memory flag is warranted during runs.
 
-Do NOT introduce AI tooling, training plans, or documentation programs.
+CLEANUP (REQUIRED)
+- Remove `@niceltd/cxone-components` and `@niceltd/cxone-domain-components` from package.json and code.
+- Add to cleanup story: perform a THOROUGH search ensuring NO remaining imports from `@niceltd/cxone-components`.
 
-Do NOT add new test coverage. Only identify where existing unit tests or Playwright E2E tests must be updated due to selector or behavior changes.
+SEARCH HINTS (document what you executed)
+- rg -n "@niceltd/cxone-components" src/
+- rg -n "@niceltd/cxone-domain-components" src/
+- rg -n "CheckboxModule as SolCheckboxModule" src/
 
-Accessibility: rely on SOL defaults for better a11y. No formal 100% audits required.
+TEST COMMANDS (document in the brief)
+- All tests: `npm run test`
+- Single test: `npm test -- --include="**/<my-test-file>.spec.ts"`
+- Expectation: all tests pass post-migration; list exact fixes required if deltas break tests.
 
-Performance: no synthetic benchmarks or optimizations beyond what SOL naturally provides.
+DELIVERABLE FORMAT (STRICT — USE EXACT SECTION ORDER & HEADINGS BELOW)
 
-Do NOT create backup files or temporary “bridge” components.
+# Breeze→SOL Migration Brief (BMAD)
+**App/Module:** <MY_APP>  
+**Date:** <YYYY-MM-DD>  
+**Author:** <AUTHOR>
 
-Rollback is out of scope: do not analyze, design, or propose rollback strategies, switch-back procedures, feature flags/toggles for rollback, dual-running modes, or downgrade paths. Treat this analysis as forward-only migration.
+## A. Component Mapping Table
+| Breeze Component | SOL Replacement | Inputs (old → new) | Outputs/Events (old → new) | Template Changes (concise snippet) | Test Impact (selectors/flows) | Complexity (L/M/H) |
+|---|---|---|---|---|---|---|
 
-MANDATORY MIGRATION RULES (INCLUDE EXPLICITLY IN THE BRIEF)
+> Include rows, at minimum, for: Buttons, Dropdowns (single & multi), Modals/Dialogs, Floating Menus, Grid/Data Table interactions, Text inputs, Checkboxes, Radios/Toggles, Tabs, Toasts/Notifications, Tooltips, Pagination (if present).
 
-Completeness: for each Breeze component type, confirm all occurrences are accounted for—none missed.
+## B. Cross-Cutting Deltas
+- **Imports:** every global import change (with file paths).
+- **Events/Handlers:** list all `(click)` → `(buttonClick)` changes and others.
+- **Styling/Theming:** exact steps to include SOL global styles and any per-component SCSS/token changes.
+- **i18n:** apply the `TranslationModule` swap everywhere applicable.
+- **E2E/Selectors:** recommended `data-testid`/role selectors per component; no try/catch around locators.
+- **Grid/Virtualization:** affected specs, proposed `rowBuffer` values, and when to use a higher local Chromium memory setting.
 
-Hard replacement policy: even raw <button> elements must be replaced by sol-button.
+## C. Modal & Floating Menu Migration
+- **Modal/Dialog:** document the replacement path for any legacy dynamic dialogs → SOL modal service. If Angular Material interop is used, pass data via `MAT_DIALOG_DATA`. Remove fixed `height`; show the result subscription pattern.
+- **Floating Menus:** map legacy menus to SOL (`FloatingMenuModule` / `MatMenuModule` as applicable), including dynamic labels/enable/disable rules.
 
-Translation module change:
+## D. Grouping & Plan
+- **Incremental groups:** safe batches based on shared modules/dependencies and risk.
+- **Complexity ranking:** L/M/H with a 1–2 sentence justification for each component/group.
 
-Replace:
-import { TranslationModule } from '@niceltd/cxone-components/translation'
+## E. Test Impact
+- **Commands to run tests** (as above).
+- **Exact fixes** required where deltas break tests (selectors, roles, timing, virtualization notes).
 
-With:
-import { TranslationModule } from '@niceltd/cxone-core-services'
+## F. Verification Checklist
+- [ ] All Breeze components replaced per table  
+- [ ] All imports updated (i18n, SOL modules, CheckboxModule alias removed)  
+- [ ] Styles added in `angular.json` (both SOL files)  
+- [ ] Playwright selectors stabilized (no try/catch)  
+- [ ] Grid virtualization guidance applied where needed  
+- [ ] `@niceltd/cxone-components` and `@niceltd/cxone-domain-components` removed  
+- [ ] Dropdowns converted to SOL with correct props  
+- [ ] Toastr migrated to `@niceltd/sol/toastr`
 
-Styling: identify missing styling and specify exactly how to include/port it (global styles, per-component SCSS, theming tokens). The brief must call out any required style imports or token replacements.
+## G. Open Issues / Risks / TODOs
+- List unknowns or places needing UX/product confirmation.
 
-E2E discipline: do not wrap Playwright locators in try/catch; allow failures to surface. Recommend stable selectors (data-testid/role).
-
-Dropdown conversion: cxone Single Select Dropdown and Multiselect Dropdown must be converted to the SOL Dropdown using the appropriate SOL properties.
-
-the click event in sol-button is buttonClick, not click.
-
-The new toaster comes from import { ToastrManagerModule } from '@niceltd/sol/toastr';
-
-Include the correct styles import:
-
-node\_modules/@niceltd/sol/src/styles/typefaces.css,
-
-node\_modules/@niceltd/sol/src/styles/sol-core.scss
-in
-angular.json/projects/<MY_APP>/architect/build/options/styles
-
-Binding and Event Delta List
-
-Where inputs, outputs, or handlers must change when switching to SOL.
-
-Do not recommend try/catch around locators.
-
-Grid-specific plan: identify specs impacted by virtualization; propose rowBuffer guidance and when to enable local Chromium memory flag.
-
-Rank migration complexity per component: low, medium, high.
-
-Phase Hints
-
-Safe grouping of components for incremental migration, based on shared modules and risk.
-
-Verification & Cleanup Plan (Analysis Checklist)
-
-How to run all unit tests and the expectation that all must pass post-migration; list the exact code/test fixes required if deltas break tests.
-
-Commands to run tests:
-
-All tests: npm run test
-
-Specific test: npm test -- --include="\*\*/<my-test-file>.spec.ts"
-
-Dependency cleanup (if present and directly tied to Breeze→SOL transition):
-
-Remove @niceltd/cxone-domain-components from package.json and eliminate all references/usages.
-
-Remove @niceltd/sol from package.json and eliminate all references/usages if sol-components local repo is the sole SOL source.
-
-Add to the clean up story:
-
-Perform a thorough search and confirm that there are no remaining imports from @niceltd/cxone-components
-
-In the cleanup story, all import like import { CheckboxModule as SolCheckboxModule } from '@niceltd/sol/checkbox'
-
-Must be updated to import { CheckboxModule } from '@niceltd/sol/checkbox' and update also the use.
-
-WHAT TO ANALYZE
-
-UI layers only: components, templates, directives, styles tied to Breeze.
-
-Data binding and event flows where SOL requires different prop or event names.
-
-ag-grid or custom grid integration that must move to SOL grid patterns.
-
-Modal, form controls, validation, toasts, navigation elements.
-
-Test selectors that rely on Breeze CSS or structure.
-
-Raw HTML controls (e.g., <button>) that must become SOL equivalents.
-
-ACCEPTANCE CRITERIA FOR THIS ANALYSIS
-
-Every Breeze usage is accounted for with a proposed SOL target or a flagged gap—no missed instances.
-
-Test impact lists concrete files and suggested new locators (no try/catch masking).
-
-GRID: E2E plan includes rowBuffer guidance and when to enable the local Chromium memory flag.
-
-MODAL: all dialog instances have a documented path replacing DynamicDialog\* with ModalService/MAT\_DIALOG\_DATA, with height removed and result subscription modeled.
-
-FLOATING MENU: all legacy menus mapped to SOL (FloatingMenuModule, MatMenuModule, MenuItem usage) with menu behaviors (e.g., dynamic labels) specified.
-
-Styling requirements are explicitly identified with inclusion steps.
-
-Removal of @niceltd/cxone-domain-components and (if present) @niceltd/sol is included in cleanup.
+WRITING RULES
+- Be specific and terse. Include file paths and exact import lines/snippets.
+- Use MUST / MUST NOT consistently. No vague language.
+- If a fact is unknown, add a TODO with what evidence is missing.
 ```
 8. **New chat.**
 9. `@pm create-doc prd`
