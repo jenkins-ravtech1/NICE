@@ -153,11 +153,11 @@ Styling requirements are explicitly identified with inclusion steps.
 Removal of @niceltd/cxone-domain-components and (if present) @niceltd/sol is included in cleanup.
 ```
 8. **New chat.**
-9. `@pm create-doc prd yolo mode`
+9. `@pm create-doc prd`
 10. **New chat.**
-11. `@architect create-doc architecture yolo mode`
+11. `@architect create-doc architecture`
 12. **New chat.**
-13. `@po execute-checklist-po yolo mode`
+13. `@po execute-checklist-po`
 14. **New chat.**
 15. `@po shard docs/prd.md to prd`
 
