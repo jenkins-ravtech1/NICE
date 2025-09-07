@@ -37,6 +37,7 @@ CONTEXT
   2) "Sol-Migration-Notes" — NOTES-ONLY repo (Markdown/snippets/checklists) capturing mappings, decisions, and gotchas from prior manual SOL migrations. This is NOT the target app repo and MUST NOT be imported or referenced as code.
 - Target application code = the CURRENT project repository you are analyzing (not "Sol-Migration-Notes").
 - Invariants: Module Federation architecture stays as is. Backend APIs and business logic remain unchanged.
+- Client-only scope: If the project includes a backend, IGNORE all server-side code. Do not analyze, modify, or document backend services. Treat backend APIs as fixed external contracts and reference them only to clarify current client usage.
 
 USING THE NOTES (MANDATORY)
 - Extract only stable rules: confirmed component mappings, required style imports, known event/name changes (e.g., buttonClick), selector patterns, common pitfalls.
@@ -58,6 +59,7 @@ NON-GOALS (MUST NOT)
 - Do NOT design rollback strategies, feature flags for rollback, dual-running modes, or downgrade paths. Forward-only analysis.
 - Do NOT perform synthetic performance work beyond what SOL naturally provides.
 - Do NOT run or require full accessibility audits; rely on SOL defaults.
+- Do NOT analyze, change, or document any backend code, endpoints, DTOs, auth flows, or infrastructure.
 
 GLOBAL HARD RULES
 - Completeness: confirm that ALL Breeze occurrences are accounted for—none missed.
