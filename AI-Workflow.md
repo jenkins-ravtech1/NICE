@@ -5,7 +5,7 @@
 1. Clone **3 repositories**.
    - your app repository
    - sol-components: https://github.com/nice-cxone/sol-components.git  
-   - NICE: https://github.com/jenkins-ravtech1/NICE
+   - Sol-Migration-Notes: https://github.com/jenkins-ravtech1/Sol-Migration-Notes.git
 2. Open a new **VS Code workspace** which includes the 3 repositories.
 3. Check if in your package.json these libraries have updated to the below versions:
 ```
