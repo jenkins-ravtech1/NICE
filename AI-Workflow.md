@@ -24,7 +24,9 @@ Installer Choices:
 ```
 5. Optional => Run: `npm install -g @kayvan/markdown-tree-parser`
 6. Generate Copilot instructions.
-7. `@analyst create-project-brief` (paste the prompt below)
+7. **New chat (ALWAYS use Sonnet 4).**
+
+`@analyst create-project-brief` (paste the prompt below)
 ```
 MODE: YOLO
 TITLE: NICE Angular Migration - Breeze to SOL - Analysis Only
