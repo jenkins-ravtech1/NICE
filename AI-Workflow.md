@@ -33,14 +33,14 @@ Installer Choices:
 CONTEXT
 - We are migrating an Angular MFE from Breeze components to SOL components.
 - SOURCES YOU MUST READ BEFORE WRITING ANYTHING:
-  1) "sol-components" — the SOL design system source (authoritative for APIs, inputs/outputs, styles, tokens).
-  2) "NICE-migration-notes" — a NOTES-ONLY repo (Markdown/snippets/checklists) capturing mappings, decisions, and gotchas from prior manual SOL migrations. This is NOT the target app repo and MUST NOT be imported or referenced as code.
-- Target application code = the CURRENT project repository you are analyzing (not "NICE-migration-notes").
+  1) "sol-components" — SOL design system source (authoritative for APIs, inputs/outputs, styles, tokens).
+  2) "Sol-Migration-Notes" — NOTES-ONLY repo (Markdown/snippets/checklists) capturing mappings, decisions, and gotchas from prior manual SOL migrations. This is NOT the target app repo and MUST NOT be imported or referenced as code.
+- Target application code = the CURRENT project repository you are analyzing (not "Sol-Migration-Notes").
 - Invariants: Module Federation architecture stays as is. Backend APIs and business logic remain unchanged.
 
 USING THE NOTES (MANDATORY)
-- Extract stable rules: confirmed component mappings, required style imports, known event/name changes (e.g., buttonClick), selector patterns, and common pitfalls.
-- Conflict resolution order: 1) sol-components API/docs, 2) current app code behavior, 3) NICE-migration-notes. If a conflict exists, flag it in "Open Issues / Risks" with the exact file/heading from the notes.
+- Extract only stable rules: confirmed component mappings, required style imports, known event/name changes (e.g., buttonClick), selector patterns, common pitfalls.
+- Conflict resolution order: 1) sol-components API/docs, 2) current app code behavior, 3) Sol-Migration-Notes. If a conflict exists, flag it in "Open Issues / Risks" with the exact file/heading from the notes.
 - For every adopted rule from the notes, cite the note file path and heading (relative path), e.g., docs/sol/button.md#events.
 - Convert any example selectors from the notes into robust recommendations (data-testid/ARIA roles), not brittle CSS chains.
 - Do NOT treat the notes as source code; they are guidance and conventions only.
