@@ -174,6 +174,9 @@ WRITING RULES
 11. `@architect create-doc architecture`
 12. **New chat.**
 13. `@po execute-checklist-po`
+
+If needed, write in the chat **Do NOT design rollback strategies**
+
 14. **New chat.**
 15. `@po shard docs/prd.md to prd`
 
