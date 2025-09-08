@@ -51,6 +51,9 @@ CONTEXT
 - Invariants: Module Federation architecture stays as is. Backend APIs and business logic remain unchanged.
 - Client-only scope: If the project includes a backend, IGNORE all server-side code. Do not analyze, modify, or document backend services. Treat backend APIs as fixed external contracts and reference them only to clarify current client usage.
 
+OUTPUT
+- A single Markdown file named "brief.md", in English.
+
 USING THE NOTES (MANDATORY)
 - Extract only stable rules: confirmed component mappings, required style imports, known event/name changes (e.g., buttonClick), selector patterns, common pitfalls.
 - Conflict resolution order: 1) sol-components API/docs, 2) current app code behavior, 3) Sol-Migration-Notes. If a conflict exists, flag it in "Open Issues / Risks" with the exact file/heading from the notes.
@@ -74,7 +77,7 @@ NON-GOALS (MUST NOT)
 
 GLOBAL HARD RULES
 - Completeness: confirm that ALL Breeze occurrences are accounted for—none missed.
-- Hard replacement: even raw `<button>` must become `<sol-button>`.
+- Hard replacement: even raw `<button>` MUST become `<sol-button>`.
 - Translation module swap:
   // Replace:
   import { TranslationModule } from '@niceltd/cxone-components/translation'
@@ -88,7 +91,7 @@ GLOBAL HARD RULES
 - Alias cleanup: replace `import { CheckboxModule as SolCheckboxModule } from '@niceltd/sol/checkbox'`
   with `import { CheckboxModule } from '@niceltd/sol/checkbox'` and update usages accordingly.
 - Dropdowns: Breeze Single-Select & Multi-Select → SOL Dropdown(s) with the correct SOL inputs/outputs.
-- E2E discipline: do NOT wrap Playwright locators in try/catch; let failures surface.
+- E2E discipline: do NOT wrap Playwright locators in try/catch; let failures surface. Prefer stable selectors (`data-testid`/roles). If stable selectors are missing, you MUST add `data-testid` attributes (non-visual) to templates and document the changed files.
 
 CLEANUP (REQUIRED)
 - Remove `@niceltd/cxone-components` and `@niceltd/cxone-domain-components` from package.json and code.
@@ -98,11 +101,72 @@ SEARCH HINTS (document what you executed)
 - rg -n "@niceltd/cxone-components" src/
 - rg -n "@niceltd/cxone-domain-components" src/
 - rg -n --pcre2 '\b(\w+)\s+as\s+Sol\1\b' src/
+- rg -n --pcre2 'from\s*["'"]@niceltd/cxone-components' src/
+- rg -n --pcre2 '<button(?![^>]*sol-button)' src/
+- rg -n --pcre2 '<sol-button[^>]*\((?:click)\)' src/
+- rg -n --pcre2 'import\s*{\s*TranslationModule\s*}\s*from\s*["'"]@niceltd/cxone-components/translation["'"]' src/
+- rg -n 'sol-core.scss' angular.json
+- rg -n 'typefaces.css' angular.json
+- rg -n "@niceltd/sol/toastr" src/
 
 TEST COMMANDS (document in the brief)
-- All tests: `npm run test`
-- Single test: `npm test -- --include="**/<my-test-file>.spec.ts"`
+- Unit (all): `npm run test`
+- Unit (single): `npm test -- --include="**/<my-test-file>.spec.ts"`
+- E2E (all): `npx playwright test`  (or the repo’s `npm run e2e` if defined)
+- E2E (filtered): `npx playwright test --config=playwright/sm/suite01/suite01.config.ts`
 - Expectation: all tests pass post-migration; list exact fixes required if deltas break tests.
+
+DELIVERABLE FORMAT (STRICT — USE EXACT SECTION ORDER & HEADINGS BELOW)
+
+# Breeze→SOL Migration Brief (BMAD)
+**App/Module:** <MY_APP>  
+**Date:** <YYYY-MM-DD>  
+**Author:** <AUTHOR>
+
+## A. Component Mapping Table
+| Breeze Component | SOL Replacement | Inputs (old → new) | Outputs/Events (old → new) | Template Changes (concise snippet) | Test Impact (selectors/flows) | Complexity (L/M/H) |
+|---|---|---|---|---|---|---|
+
+> Include rows, at minimum, for: Buttons, Dropdowns (single & multi), Modals/Dialogs, Floating Menus, Grid/Data Table interactions, Text inputs, Checkboxes, Radios/Toggles, Tabs, Toasts/Notifications, Tooltips, Pagination (if present).
+
+## B. Cross-Cutting Deltas
+- **Imports:** every global import change (with file paths).
+- **Events/Handlers:** list all `(click)` → `(buttonClick)` changes and others.
+- **Styling/Theming:** exact steps to include SOL global styles and any per-component SCSS/token changes.
+- **i18n:** apply the `TranslationModule` swap everywhere applicable.
+- **E2E/Selectors:** recommended `data-testid`/role selectors per component.
+- **Grid/Virtualization:** affected specs, proposed `rowBuffer` values, and—if needed—local Chromium memory flags during runs.
+
+## C. Modal & Floating Menu Migration
+- **Modal/Dialog:** document the replacement path for any legacy dynamic dialogs → SOL modal service. If Angular Material interop is used, pass data via `MAT_DIALOG_DATA`. Remove fixed `height`; show the result subscription pattern.
+- **Floating Menus:** map legacy menus to SOL (`FloatingMenuModule` / `MatMenuModule` as applicable), including dynamic labels/enable/disable rules.
+
+## D. Grouping & Plan
+- **Incremental groups:** safe batches based on shared modules/dependencies and risk.
+- **Complexity ranking:** L/M/H with a 1–2 sentence justification for each component/group.
+
+## E. Test Impact
+- **Commands to run tests** (as above).
+- **Exact fixes** required where deltas break tests (selectors, roles, timing, virtualization notes).
+
+## F. Verification Checklist
+- [ ] All Breeze components replaced per table  
+- [ ] All imports updated (i18n, SOL modules, CheckboxModule alias removed)  
+- [ ] Styles added in `angular.json` (both SOL files)  
+- [ ] Playwright selectors stabilized (no try/catch)  
+- [ ] Grid virtualization guidance applied where needed  
+- [ ] `@niceltd/cxone-components` and `@niceltd/cxone-domain-components` removed  
+- [ ] Dropdowns converted to SOL with correct props  
+- [ ] Toastr migrated to `@niceltd/sol/toastr`
+
+## G. Open Issues / Risks / TODOs
+- List unknowns or places needing UX/product confirmation.
+
+WRITING RULES
+- Be specific and terse. Include file paths and exact import lines/snippets.
+- Use MUST / MUST NOT consistently. No vague language.
+- All code snippets and identifiers MUST be in English.
+- If a fact is unknown, add a TODO with what evidence is missing.
 ```
 8. **New chat.**
 9. `@pm create-doc prd`
