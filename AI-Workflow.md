@@ -9,8 +9,8 @@ Run the app, the unit tests and the e2e to check if all works well.
    - your app repository
    - sol-components: https://github.com/nice-cxone/sol-components.git  
    - Sol-Migration-Notes: https://github.com/jenkins-ravtech1/Sol-Migration-Notes.git
-2. Open a new **VS Code workspace** which includes the 3 repositories.
-3. Check if in your package.json these libraries have updated to the below versions:
+2. In VS Code, open your application folder. Then click on Add Folder to Workspace and select the two other folders. After that, you can save the workspace to your disk (make sure to save it alongside your application folder, not inside it).
+3. Check if in your package.json these libraries have updated to at least the below versions:
 ```
 "@niceltd/cxone-client-platform-services": "^33.5.0",
 "@niceltd/cxone-core-services": "^27.6.0",
