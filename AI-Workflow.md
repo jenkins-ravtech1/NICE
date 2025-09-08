@@ -29,6 +29,15 @@ Installer Choices:
 ```
 5. Optional => Run: `npm install -g @kayvan/markdown-tree-parser`
 6. Generate Copilot instructions.
+
+**If at the end of the chat response, the chat asks this kind of question:**
+```
+Select 1-9 or just type your question/feedback ...
+```
+**you can write in the chat window
+```yolo mode```
+It will run all the steps at once.**
+
 7. **New chat (ALWAYS use Sonnet 4).**
 
 `@analyst create-project-brief` (paste the prompt below)
@@ -46,7 +55,6 @@ USING THE NOTES (MANDATORY)
 - Extract only stable rules: confirmed component mappings, required style imports, known event/name changes (e.g., buttonClick), selector patterns, common pitfalls.
 - Conflict resolution order: 1) sol-components API/docs, 2) current app code behavior, 3) Sol-Migration-Notes. If a conflict exists, flag it in "Open Issues / Risks" with the exact file/heading from the notes.
 - For every adopted rule from the notes, cite the note file path and heading (relative path), e.g., docs/sol/button.md#events.
-- Convert any example selectors from the notes into robust recommendations (data-testid/ARIA roles), not brittle CSS chains.
 - Do NOT treat the notes as source code; they are guidance and conventions only.
 
 SCOPE (WHAT TO DO)
@@ -80,8 +88,7 @@ GLOBAL HARD RULES
 - Alias cleanup: replace `import { CheckboxModule as SolCheckboxModule } from '@niceltd/sol/checkbox'`
   with `import { CheckboxModule } from '@niceltd/sol/checkbox'` and update usages accordingly.
 - Dropdowns: Breeze Single-Select & Multi-Select → SOL Dropdown(s) with the correct SOL inputs/outputs.
-- E2E discipline: do NOT wrap Playwright locators in try/catch; let failures surface. Prefer stable selectors (data-testid/roles).
-- Grid/virtualization: call out specs impacted by virtualization; provide `rowBuffer` guidance and when a local Chromium memory flag is warranted during runs.
+- E2E discipline: do NOT wrap Playwright locators in try/catch; let failures surface.
 
 CLEANUP (REQUIRED)
 - Remove `@niceltd/cxone-components` and `@niceltd/cxone-domain-components` from package.json and code.
@@ -90,75 +97,15 @@ CLEANUP (REQUIRED)
 SEARCH HINTS (document what you executed)
 - rg -n "@niceltd/cxone-components" src/
 - rg -n "@niceltd/cxone-domain-components" src/
-- rg -n "CheckboxModule as SolCheckboxModule" src/
+- rg -n --pcre2 '\b(\w+)\s+as\s+Sol\1\b' src/
 
 TEST COMMANDS (document in the brief)
 - All tests: `npm run test`
 - Single test: `npm test -- --include="**/<my-test-file>.spec.ts"`
 - Expectation: all tests pass post-migration; list exact fixes required if deltas break tests.
-
-DELIVERABLE FORMAT (STRICT — USE EXACT SECTION ORDER & HEADINGS BELOW)
-
-# Breeze→SOL Migration Brief (BMAD)
-**App/Module:** <MY_APP>  
-**Date:** <YYYY-MM-DD>  
-**Author:** <AUTHOR>
-
-## A. Component Mapping Table
-| Breeze Component | SOL Replacement | Inputs (old → new) | Outputs/Events (old → new) | Template Changes (concise snippet) | Test Impact (selectors/flows) | Complexity (L/M/H) |
-|---|---|---|---|---|---|---|
-
-> Include rows, at minimum, for: Buttons, Dropdowns (single & multi), Modals/Dialogs, Floating Menus, Grid/Data Table interactions, Text inputs, Checkboxes, Radios/Toggles, Tabs, Toasts/Notifications, Tooltips, Pagination (if present).
-
-## B. Cross-Cutting Deltas
-- **Imports:** every global import change (with file paths).
-- **Events/Handlers:** list all `(click)` → `(buttonClick)` changes and others.
-- **Styling/Theming:** exact steps to include SOL global styles and any per-component SCSS/token changes.
-- **i18n:** apply the `TranslationModule` swap everywhere applicable.
-- **E2E/Selectors:** recommended `data-testid`/role selectors per component; no try/catch around locators.
-- **Grid/Virtualization:** affected specs, proposed `rowBuffer` values, and when to use a higher local Chromium memory setting.
-
-## C. Modal & Floating Menu Migration
-- **Modal/Dialog:** document the replacement path for any legacy dynamic dialogs → SOL modal service. If Angular Material interop is used, pass data via `MAT_DIALOG_DATA`. Remove fixed `height`; show the result subscription pattern.
-- **Floating Menus:** map legacy menus to SOL (`FloatingMenuModule` / `MatMenuModule` as applicable), including dynamic labels/enable/disable rules.
-
-## D. Grouping & Plan
-- **Incremental groups:** safe batches based on shared modules/dependencies and risk.
-- **Complexity ranking:** L/M/H with a 1–2 sentence justification for each component/group.
-
-## E. Test Impact
-- **Commands to run tests** (as above).
-- **Exact fixes** required where deltas break tests (selectors, roles, timing, virtualization notes).
-
-## F. Verification Checklist
-- [ ] All Breeze components replaced per table  
-- [ ] All imports updated (i18n, SOL modules, CheckboxModule alias removed)  
-- [ ] Styles added in `angular.json` (both SOL files)  
-- [ ] Playwright selectors stabilized (no try/catch)  
-- [ ] Grid virtualization guidance applied where needed  
-- [ ] `@niceltd/cxone-components` and `@niceltd/cxone-domain-components` removed  
-- [ ] Dropdowns converted to SOL with correct props  
-- [ ] Toastr migrated to `@niceltd/sol/toastr`
-
-## G. Open Issues / Risks / TODOs
-- List unknowns or places needing UX/product confirmation.
-
-WRITING RULES
-- Be specific and terse. Include file paths and exact import lines/snippets.
-- Use MUST / MUST NOT consistently. No vague language.
-- If a fact is unknown, add a TODO with what evidence is missing.
 ```
 8. **New chat.**
 9. `@pm create-doc prd`
-
-If at the end of the chat response, the chat asks this kind of question:
-```
-Select 1-9 or just type your question/feedback ...
-```
-you can write in the chat window
-```yolo mode```
-It will run all the steps at once.
-
 10. **New chat.**
 11. `@architect create-doc architecture`
 12. **New chat.**
