@@ -150,6 +150,24 @@ WRITING RULES
 ```
 8. **New chat.**
 9. `@pm create-doc prd`
+If the chat asks this kind of question:,
+```
+Select 1-9 or just type your question/feedback:
+
+Proceed to next section
+Expand or Contract for Audience - Adjust detail level and complexity for specific stakeholders
+Explain Reasoning (CoT Step-by-Step) - Walk through my analysis process and assumptions
+Critique and Refine - Review for flaws and suggest improvements
+Analyze Logical Flow and Dependencies - Examine structure and sequencing
+Assess Alignment with Overall Goals - Evaluate contribution to objectives
+Identify Potential Risks and Unforeseen Issues - Brainstorm risks from PM perspective
+Challenge from Critical Perspective - Play devil's advocate on current content
+Tree of Thoughts Deep Dive - Explore multiple reasoning paths for goals definition
+```
+you can write it
+```yolo mode```
+It will run all the steps at once.
+
 10. **New chat.**
 11. `@architect create-doc architecture`
 12. **New chat.**
