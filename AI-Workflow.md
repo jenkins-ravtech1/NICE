@@ -91,7 +91,7 @@ GLOBAL HARD RULES
 - Alias cleanup: replace `import { CheckboxModule as SolCheckboxModule } from '@niceltd/sol/checkbox'`
   with `import { CheckboxModule } from '@niceltd/sol/checkbox'` and update usages accordingly.
 - Dropdowns: Breeze Single-Select & Multi-Select → SOL Dropdown(s) with the correct SOL inputs/outputs.
-- E2E discipline: do NOT wrap Playwright locators in try/catch; let failures surface. Prefer stable selectors (`data-testid`/roles). If stable selectors are missing, you MUST add `data-testid` attributes (non-visual) to templates and document the changed files.
+- E2E discipline: do NOT wrap Playwright locators in try/catch; let failures surface.
 
 CLEANUP (REQUIRED)
 - Remove `@niceltd/cxone-components` and `@niceltd/cxone-domain-components` from package.json and code.
@@ -134,7 +134,6 @@ DELIVERABLE FORMAT (STRICT — USE EXACT SECTION ORDER & HEADINGS BELOW)
 - **Events/Handlers:** list all `(click)` → `(buttonClick)` changes and others.
 - **Styling/Theming:** exact steps to include SOL global styles and any per-component SCSS/token changes.
 - **i18n:** apply the `TranslationModule` swap everywhere applicable.
-- **E2E/Selectors:** recommended `data-testid`/role selectors per component.
 - **Grid/Virtualization:** affected specs, proposed `rowBuffer` values, and—if needed—local Chromium memory flags during runs.
 
 ## C. Modal & Floating Menu Migration
