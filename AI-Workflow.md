@@ -42,48 +42,140 @@ It will run all the steps at once.**
 
 `@analyst create-project-brief` (paste the prompt below)
 ```
-The goal of this project is to migrate the current Angular MFE application from Breeze components to SOL components.
-- Sources you MUST read before writing any code:
-  1) The "sol-components" folder that holds the migration documentation.
-  2) "Sol-Migration-Notes" folder developer NOTES-ONLY capturing decisions, and gotchas from prior manual SOL migrations.
-- Invariants: Module Federation architecture, Backend APIs and business logic stays as is and should NOT be changed.
-- Client-only scope: If the project includes a backend, IGNORE all server-side code. Do not analyze, modify, or document backend services. Treat backend APIs as fixed external contracts and reference them only to clarify current client usage.
-- Create a **Component Mapping Table** in Markdown with the following columns:
-  | Breeze Component | SOL Replacement | Inputs (old → new) | Outputs/Events (old → new) | Template Changes (concise snippet) | Test Impact (selectors/flows) | Complexity (L/M/H) |
-  The table MUST cover all cxone components affected by the migration to SOL.
+Angular MFE Migration: Breeze to SOL Components
 
-NON-GOALS (MUST NOT)
-- Do NOT propose new features, KPIs, budgets, timelines, or process/training/documentation programs (including AI tooling).
-- Do NOT add new test coverage beyond the minimum updates caused by the migration.
-- Do NOT create backup files.
-- Do NOT design rollback strategies, feature flags for rollback, dual-running modes, or downgrade paths.
-- Do NOT perform synthetic performance work beyond what SOL naturally provides.
-- Do NOT run or require full accessibility audits; rely on SOL defaults.
-- Do NOT analyze, change, or document any backend code, endpoints, DTOs, auth flows, or infrastructure.
+PROJECT OVERVIEW
+Objective: Complete migration of the current Angular Micro Frontend (MFE) application from Breeze component library to SOL component library.
 
-GLOBAL HARD RULES
-- Completeness: confirm that ALL Breeze occurrences are accounted for—none missed.
-- Hard replacement: even raw `<button>` MUST become `<sol-button>`.
-- Translation module swap:
-  // Replace:
-  import { TranslationModule } from '@niceltd/cxone-components/translation'
-  // With:
-  import { TranslationModule } from '@niceltd/cxone-core-services'
-- SOL button event: `(buttonClick)` is the event, NOT `(click)`. Update handlers accordingly.
-- Toaster: use `import { ToastrManagerModule } from '@niceltd/sol/toastr';`.
-- Styles (angular.json → projects/<MY_APP>/architect/build/options/styles):
-  - node_modules/@niceltd/sol/src/styles/typefaces.css
-  - node_modules/@niceltd/sol/src/styles/sol-core.scss
-- Alias cleanup: MUST be done to all components, for example: replace `import { CheckboxModule as SolCheckboxModule } from '@niceltd/sol/checkbox'`
-  with `import { CheckboxModule } from '@niceltd/sol/checkbox'` and update usages accordingly.
-- Dropdowns: Breeze Single-Select & Multi-Select → SOL Dropdown(s) with the correct SOL inputs/outputs.
-- Icons: replace all `<cxone-svg-sprite-icon>` with `<sol-icon>` — **do NOT** use `<sol-svg-sprite-icon>`. Update inputs/attributes to the SOL equivalents and remove any sprite-path assumptions per SOL API.
-- E2E discipline: do NOT wrap Playwright locators in try/catch; let failures surface.
+CRITICAL PREREQUISITES
+Before writing ANY code, you MUST:
+1. Read and analyze the sol-components folder containing official migration documentation
+2. Study thoroughly the Sol-Migration-Notes folder containing developer notes, decisions, and gotchas from previous manual SOL migrations
 
-CLEANUP (REQUIRED)
-- Remove `@niceltd/cxone-components` and `@niceltd/cxone-domain-components` from package.json and code.
-- Remove any imports from package.json and code for migrated Breeze components to new SOL components.
-- Perform a THOROUGH search ensuring NO remaining imports from `@niceltd/cxone-components`.
+SCOPE & BOUNDARIES
+
+IN SCOPE:
+- Client-side only: All Angular components, templates, styles, and client-side logic
+- Component migration: Complete replacement of Breeze components with SOL equivalents
+- Test updates: Minimal changes to existing tests necessitated by component migration
+- Import cleanup: Full removal of deprecated Breeze dependencies
+
+OUT OF SCOPE (STRICT):
+- Backend services, APIs, endpoints, DTOs, auth flows, or infrastructure
+- New features, enhancements, or functionality additions
+- New test coverage beyond migration-required updates
+- Performance optimization beyond SOL's built-in improvements
+- Rollback strategies, feature flags, or dual-running modes
+- Full accessibility audits (rely on SOL defaults)
+- KPIs, budgets, timelines, or process documentation
+
+INVARIANTS (DO NOT MODIFY)
+1. Module Federation architecture must remain unchanged
+2. Backend APIs treated as fixed external contracts
+3. Business logic preservation required
+
+MIGRATION RULES & REQUIREMENTS
+
+1. Component Mapping Documentation
+Create a comprehensive Component Mapping Table in Markdown format:
+
+| Breeze Component | SOL Replacement | Inputs (old → new) | Outputs/Events (old → new) | Template Changes (concise snippet) | Test Impact (selectors/flows) | Complexity (L/M/H) |
+
+Requirements:
+- MUST include ALL cxone components affected by migration
+- MUST verify completeness - no Breeze component can be missed
+
+2. Hard Replacement Rules
+
+Translation Module:
+REMOVE: import { TranslationModule } from '@niceltd/cxone-components/translation'
+REPLACE WITH: import { TranslationModule } from '@niceltd/cxone-core-services'
+
+Button Components:
+- ALL button elements must migrate: <button> → <sol-button>
+- Event handler: (click) → (buttonClick)
+  Before: <button (click)="handleClick()">
+  After: <sol-button (buttonClick)="handleClick()">
+
+Icon Components:
+REMOVE: <cxone-svg-sprite-icon>
+REPLACE WITH: <sol-icon> (NOT sol-svg-sprite-icon)
+- Update all inputs/attributes per SOL API documentation
+- Remove sprite-path assumptions
+
+Dropdown Components:
+- Single-Select Breeze → SOL Dropdown with appropriate configuration
+- Multi-Select Breeze → SOL Dropdown with multi-select enabled
+- Map all inputs/outputs correctly
+
+Toaster Service:
+import { ToastrManagerModule } from '@niceltd/sol/toastr';
+
+3. Style Configuration
+Update angular.json at path projects/<YOUR_APP>/architect/build/options/styles:
+"styles": [
+  "node_modules/@niceltd/sol/src/styles/typefaces.css",
+  "node_modules/@niceltd/sol/src/styles/sol-core.scss",
+  ... other styles
+]
+
+4. Import Cleanup Requirements
+
+Alias Removal (MANDATORY):
+REMOVE aliases: import { CheckboxModule as SolCheckboxModule } from '@niceltd/sol/checkbox'
+USE direct imports: import { CheckboxModule } from '@niceltd/sol/checkbox'
+
+Package Cleanup - Remove from package.json and all code:
+- @niceltd/cxone-components
+- @niceltd/cxone-domain-components
+- Any Breeze-specific dependencies
+
+5. Testing Discipline
+- E2E tests: NO try/catch wrapping of Playwright locators
+- Let test failures surface naturally for debugging
+- Update selectors and flows only as required by component changes
+
+VERIFICATION CHECKLIST
+
+Pre-Migration:
+- sol-components folder documentation reviewed
+- Sol-Migration-Notes folder analyzed
+- All Breeze components identified and mapped
+
+During Migration:
+- Component mapping table created and complete
+- All Breeze imports replaced
+- All button events updated to (buttonClick)
+- All icons migrated to <sol-icon>
+- Translation module source updated
+- Styles configuration updated in angular.json
+- Import aliases removed
+
+Post-Migration:
+- ZERO imports from @niceltd/cxone-components (perform exhaustive search)
+- ZERO imports from @niceltd/cxone-domain-components
+- All tests updated and passing
+- No Breeze components remaining in codebase
+- Package.json cleaned of deprecated dependencies
+
+SEARCH COMMANDS FOR VERIFICATION
+Use these to ensure complete migration:
+
+Find any remaining Breeze imports:
+grep -r "@niceltd/cxone-components" --include="*.ts" --include="*.html"
+grep -r "@niceltd/cxone-domain-components" --include="*.ts" --include="*.html"
+
+Find any remaining cxone- prefixed components in templates:
+grep -r "<cxone-" --include="*.html"
+
+Find any (click) events that should be (buttonClick):
+grep -r "sol-button.*\(click\)" --include="*.html"
+
+FINAL NOTES
+- Completeness is critical: Every single Breeze component must be accounted for
+- No partial migrations: Components are either fully migrated or not touched
+- Backend is untouchable: Treat all backend services as black boxes with fixed contracts
+- Documentation focus: The Component Mapping Table is the primary deliverable
 ```
 8. **New chat.**
 9. `@pm create-doc prd`
