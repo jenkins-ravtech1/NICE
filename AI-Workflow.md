@@ -51,9 +51,6 @@ CONTEXT
 - Invariants: Module Federation architecture stays as is. Backend APIs and business logic remain unchanged.
 - Client-only scope: If the project includes a backend, IGNORE all server-side code. Do not analyze, modify, or document backend services. Treat backend APIs as fixed external contracts and reference them only to clarify current client usage.
 
-OUTPUT
-- A single Markdown file named "brief.md", in English.
-
 USING THE NOTES (MANDATORY)
 - Extract only stable rules: confirmed component mappings, required style imports, known event/name changes (e.g., buttonClick), selector patterns, common pitfalls.
 - Conflict resolution order: 1) sol-components API/docs, 2) current app code behavior, 3) Sol-Migration-Notes. If a conflict exists, flag it in "Open Issues / Risks" with the exact file/heading from the notes.
@@ -160,12 +157,6 @@ DELIVERABLE FORMAT (STRICT — USE EXACT SECTION ORDER & HEADINGS BELOW)
 
 ## G. Open Issues / Risks / TODOs
 - List unknowns or places needing UX/product confirmation.
-
-WRITING RULES
-- Be specific and terse. Include file paths and exact import lines/snippets.
-- Use MUST / MUST NOT consistently. No vague language.
-- All code snippets and identifiers MUST be in English.
-- If a fact is unknown, add a TODO with what evidence is missing.
 ```
 8. **New chat.**
 9. `@pm create-doc prd`
