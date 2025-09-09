@@ -42,35 +42,21 @@ It will run all the steps at once.**
 
 `@analyst create-project-brief` (paste the prompt below)
 ```
-CONTEXT
-- We are migrating an Angular MFE from Breeze components to SOL components.
-- SOURCES YOU MUST READ BEFORE WRITING ANYTHING:
-  1) "sol-components" — SOL design system source (authoritative for APIs, inputs/outputs, styles, tokens).
-  2) "Sol-Migration-Notes" — NOTES-ONLY repo (Markdown/snippets/checklists) capturing mappings, decisions, and gotchas from prior manual SOL migrations. This is NOT the target app repo and MUST NOT be imported or referenced as code.
-- Target application code = the CURRENT project repository you are analyzing (not "Sol-Migration-Notes").
-- Invariants: Module Federation architecture stays as is. Backend APIs and business logic remain unchanged.
+The goal of this project is to migrate the current Angular MFE application from Breeze components to SOL components.
+- Sources you MUST read before writing any code:
+  1) The "sol-components" folder that holds the migration documentation.
+  2) "Sol-Migration-Notes" folder developer NOTES-ONLY capturing decisions, and gotchas from prior manual SOL migrations.
+- Invariants: Module Federation architecture, Backend APIs and business logic stays as is and should NOT be changed.
 - Client-only scope: If the project includes a backend, IGNORE all server-side code. Do not analyze, modify, or document backend services. Treat backend APIs as fixed external contracts and reference them only to clarify current client usage.
-
-USING THE NOTES (MANDATORY)
-- Extract only stable rules: confirmed component mappings, required style imports, known event/name changes (e.g., buttonClick), selector patterns, common pitfalls.
-- Conflict resolution order: 1) sol-components API/docs, 2) current app code behavior, 3) Sol-Migration-Notes. If a conflict exists, flag it in "Open Issues / Risks" with the exact file/heading from the notes.
-- For every adopted rule from the notes, cite the note file path and heading (relative path), e.g., docs/sol/button.md#events.
-- Do NOT treat the notes as source code; they are guidance and conventions only.
-
-SCOPE (WHAT TO DO)
-- Enumerate every Breeze component usage and map it to its SOL replacement.
-- Specify exact import changes, template deltas, input/output handler changes, and styling includes.
-- Identify ONLY the updates required to EXISTING unit tests and Playwright E2E tests due to selector/behavior changes (no new tests).
-- Provide a safe grouping plan for incremental migration, and a per-component complexity rating (Low/Medium/High).
-- Include a **Component Mapping Table** in Markdown with the following columns:
+- Create a **Component Mapping Table** in Markdown with the following columns:
   | Breeze Component | SOL Replacement | Inputs (old → new) | Outputs/Events (old → new) | Template Changes (concise snippet) | Test Impact (selectors/flows) | Complexity (L/M/H) |
   The table MUST cover all cxone components affected by the migration to SOL.
 
 NON-GOALS (MUST NOT)
 - Do NOT propose new features, KPIs, budgets, timelines, or process/training/documentation programs (including AI tooling).
 - Do NOT add new test coverage beyond the minimum updates caused by the migration.
-- Do NOT create backup files or temporary “bridge” components.
-- Do NOT design rollback strategies, feature flags for rollback, dual-running modes, or downgrade paths. Forward-only analysis.
+- Do NOT create backup files.
+- Do NOT design rollback strategies, feature flags for rollback, dual-running modes, or downgrade paths.
 - Do NOT perform synthetic performance work beyond what SOL naturally provides.
 - Do NOT run or require full accessibility audits; rely on SOL defaults.
 - Do NOT analyze, change, or document any backend code, endpoints, DTOs, auth flows, or infrastructure.
@@ -88,7 +74,7 @@ GLOBAL HARD RULES
 - Styles (angular.json → projects/<MY_APP>/architect/build/options/styles):
   - node_modules/@niceltd/sol/src/styles/typefaces.css
   - node_modules/@niceltd/sol/src/styles/sol-core.scss
-- Alias cleanup: replace `import { CheckboxModule as SolCheckboxModule } from '@niceltd/sol/checkbox'`
+- Alias cleanup: MUST be done to all components, for example: replace `import { CheckboxModule as SolCheckboxModule } from '@niceltd/sol/checkbox'`
   with `import { CheckboxModule } from '@niceltd/sol/checkbox'` and update usages accordingly.
 - Dropdowns: Breeze Single-Select & Multi-Select → SOL Dropdown(s) with the correct SOL inputs/outputs.
 - Icons: replace all `<cxone-svg-sprite-icon>` with `<sol-icon>` — **do NOT** use `<sol-svg-sprite-icon>`. Update inputs/attributes to the SOL equivalents and remove any sprite-path assumptions per SOL API.
@@ -96,9 +82,10 @@ GLOBAL HARD RULES
 
 CLEANUP (REQUIRED)
 - Remove `@niceltd/cxone-components` and `@niceltd/cxone-domain-components` from package.json and code.
-- Add to cleanup story: perform a THOROUGH search ensuring NO remaining imports from `@niceltd/cxone-components`.
+- Remove any imports from package.json and code for migrated Breeze components to new SOL components.
+- Perform a THOROUGH search ensuring NO remaining imports from `@niceltd/cxone-components`.
 
-SEARCH HINTS (document what you executed)
+SEARCH HINTS
 - rg -n "@niceltd/cxone-components" src/
 - rg -n "@niceltd/cxone-domain-components" src/
 - rg -n --pcre2 '\b(\w+)\s+as\s+Sol\1\b' src/
@@ -110,7 +97,7 @@ SEARCH HINTS (document what you executed)
 - rg -n 'typefaces.css' angular.json
 - rg -n "@niceltd/sol/toastr" src/
 
-TEST COMMANDS (document in the brief)
+TEST COMMANDS
 - Unit (all): `npm run test`
 - Unit (single): `npm test -- --include="**/<my-test-file>.spec.ts"`
 - E2E (all): `npx playwright test`  (or the repo’s `npm run e2e` if defined)
