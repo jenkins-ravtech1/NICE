@@ -85,18 +85,6 @@ CLEANUP (REQUIRED)
 - Remove any imports from package.json and code for migrated Breeze components to new SOL components.
 - Perform a THOROUGH search ensuring NO remaining imports from `@niceltd/cxone-components`.
 
-SEARCH HINTS
-- rg -n "@niceltd/cxone-components" src/
-- rg -n "@niceltd/cxone-domain-components" src/
-- rg -n --pcre2 '\b(\w+)\s+as\s+Sol\1\b' src/
-- rg -n --pcre2 'from\s*["'"]@niceltd/cxone-components' src/
-- rg -n --pcre2 '<button(?![^>]*sol-button)' src/
-- rg -n --pcre2 '<sol-button[^>]*\((?:click)\)' src/
-- rg -n --pcre2 'import\s*{\s*TranslationModule\s*}\s*from\s*["'"]@niceltd/cxone-components/translation["'"]' src/
-- rg -n 'sol-core.scss' angular.json
-- rg -n 'typefaces.css' angular.json
-- rg -n "@niceltd/sol/toastr" src/
-
 TEST COMMANDS
 - Unit (all): `npm run test`
 - Unit (single): `npm test -- --include="**/<my-test-file>.spec.ts"`
