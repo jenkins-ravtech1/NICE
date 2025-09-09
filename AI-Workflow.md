@@ -84,13 +84,6 @@ CLEANUP (REQUIRED)
 - Remove `@niceltd/cxone-components` and `@niceltd/cxone-domain-components` from package.json and code.
 - Remove any imports from package.json and code for migrated Breeze components to new SOL components.
 - Perform a THOROUGH search ensuring NO remaining imports from `@niceltd/cxone-components`.
-
-TEST COMMANDS
-- Unit (all): `npm run test`
-- Unit (single): `npm test -- --include="**/<my-test-file>.spec.ts"`
-- E2E (all): `npx playwright test`  (or the repo’s `npm run e2e` if defined)
-- E2E (filtered): `npx playwright test --config=playwright/sm/suite01/suite01.config.ts`
-- Expectation: all tests pass post-migration; list exact fixes required if deltas break tests.
 ```
 8. **New chat.**
 9. `@pm create-doc prd`
