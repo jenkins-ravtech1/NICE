@@ -49,8 +49,8 @@ Objective: Complete migration of the current Angular Micro Frontend (MFE) applic
 
 CRITICAL PREREQUISITES
 Before writing ANY code, you MUST:
-1. Read and analyze the sol-components folder(located in the root project folder) containing official migration documentation
-2. Study thoroughly the Sol-Migration-Notes folder(located in the root project folder) containing developer notes, decisions, and gotchas from previous manual SOL migrations
+1. Read and analyze the sol-components folder (located in the root project folder) containing official migration documentation
+2. Study thoroughly the Sol-Migration-Notes folder (located in the root project folder) containing developer notes, decisions, and gotchas from previous manual SOL migrations
 
 SCOPE & BOUNDARIES
 
