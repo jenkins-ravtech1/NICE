@@ -19,16 +19,31 @@ Run the app, the unit tests and the e2e to check if all works well.
 
 Installer Choices:
 ```
-- Type .
-- BMad Agile Core System (v4.43.0) .bmad-core
-- PRD sharded into multiple files: **Yes**
-- Architecture docs sharded into multiple files: **Yes**
-- IDE configured: **GitHub Copilot**
-- Copilot config: **Recommended defaults**
-- Pre-built web bundles: **No**
+Q: Enter the full path to your project directory where BMad should be installed
+A: Type . and Enter
+
+Q: Select what to install/update (use space to select, enter to continue): (Press <space> to select, <a> to toggle all, <i> to invert selection, and <enter> to proceed)
+A: Press Enter
+
+Q: Will the PRD (Product Requirements Document) be sharded into multiple files?
+A: Type y and press Enter
+
+Q: Will the architecture documentation be sharded into multiple files?
+A: Type y and press Enter
+
+Q: Which IDE(s) do you want to configure? (Select with SPACEBAR, confirm with ENTER): (Press <space> to select, <a>
+to toggle all, <i> to invert selection, and <enter> to proceed)
+A: Search for GitHub Copilot and Press Enter
+
+Q: How would you like to configure GitHub Copilot settings?
+A: Copilot config: **Recommended defaults**
+
+Q: Would you like to include pre-built web bundles? (standalone files for ChatGPT, Claude, Gemini)
+A: Type n and press Enter
 ```
 5. Optional => Run: `npm install -g @kayvan/markdown-tree-parser`
-6. Generate Copilot instructions.
+6. Open the Copilot toggle Chat.
+Click on the settings icon, and choose the Generate Copilot instructions option.
 
 **If at the end of the chat response, the chat asks this kind of question:**
 ```
