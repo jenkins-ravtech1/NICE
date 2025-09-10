@@ -12,8 +12,10 @@ Run the app, the unit tests and the e2e to check if all works well.
 2. In VS Code, open your application folder. Then click on Add Folder to Workspace and select the two other folders. After that, you can save the workspace to your disk (make sure to save it alongside your application folder, not inside it).
 3. Check if in your package.json these libraries have updated to at least the below versions:
 ```
+"@niceltd/cxone-domain-components": "^30.3.0",
 "@niceltd/cxone-client-platform-services": "^33.5.0",
-"@niceltd/cxone-core-services": "^27.6.0",
+"@niceltd/cxone-core-services": "^27.7.0",
+"cxone-admin-library-components": "8.90.0"
 ```
 4. In your app repo, run: `npx bmad-method install`
 
@@ -147,6 +149,10 @@ Package Cleanup - Remove from package.json and all code:
 - @niceltd/cxone-components
 - Any Breeze-specific dependencies
 
+Import Removal (MANDATORY):
+REMOVE: import { NavigationModule } from '@niceltd/cxone-domain-components/navigation'
+This import must be completely eliminated from all files
+
 5. Testing Discipline
 - E2E tests: NO try/catch wrapping of Playwright locators
 - Let test failures surface naturally for debugging
@@ -165,11 +171,13 @@ During Migration:
 - All button events updated to (buttonClick)
 - All icons migrated to <sol-icon>
 - Translation module source updated
+- Navigation module imports REMOVED
 - Styles configuration updated in angular.json
 - Import aliases removed
 
 Post-Migration:
 - ZERO imports from @niceltd/cxone-components (perform exhaustive search)
+- ZERO NavigationModule imports from @niceltd/cxone-domain-components/navigation
 - All tests updated and passing
 - No Breeze components remaining in codebase
 - Package.json cleaned of deprecated dependencies
@@ -186,10 +194,14 @@ grep -r "<cxone-" --include="*.html"
 Find any (click) events that should be (buttonClick):
 grep -r "sol-button.*\(click\)" --include="*.html"
 
+Find any remaining NavigationModule imports (MUST return zero results):
+grep -r "NavigationModule.*@niceltd/cxone-domain-components/navigation" --include="*.ts"
+
 FINAL NOTES
 - Completeness is critical: Every single Breeze component must be accounted for
 - No partial migrations: Components are either fully migrated or not touched
 - Backend is untouchable: Treat all backend services as black boxes with fixed contracts
+- NavigationModule elimination: This import must be completely removed from the codebase
 - Documentation focus: The Component Mapping Table is the primary deliverable
 ```
 8. **New chat.**
