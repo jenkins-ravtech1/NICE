@@ -126,6 +126,9 @@ Dropdown Components:
 Toaster Service:
 import { ToastrManagerModule } from '@niceltd/sol/toastr';
 
+Spinner Components:
+If you need a spinner that turns on and off automatically when network requests start and finish, you should use the App Spinner in the CXone Domain Components.
+
 3. Style Configuration
 Update angular.json at path projects/<YOUR_APP>/architect/build/options/styles:
 "styles": [
