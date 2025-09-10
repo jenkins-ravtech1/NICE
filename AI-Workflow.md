@@ -142,7 +142,6 @@ USE direct imports: import { CheckboxModule } from '@niceltd/sol/checkbox'
 
 Package Cleanup - Remove from package.json and all code:
 - @niceltd/cxone-components
-- @niceltd/cxone-domain-components
 - Any Breeze-specific dependencies
 
 5. Testing Discipline
@@ -168,7 +167,6 @@ During Migration:
 
 Post-Migration:
 - ZERO imports from @niceltd/cxone-components (perform exhaustive search)
-- ZERO imports from @niceltd/cxone-domain-components
 - All tests updated and passing
 - No Breeze components remaining in codebase
 - Package.json cleaned of deprecated dependencies
@@ -178,7 +176,6 @@ Use these to ensure complete migration:
 
 Find any remaining Breeze imports:
 grep -r "@niceltd/cxone-components" --include="*.ts" --include="*.html"
-grep -r "@niceltd/cxone-domain-components" --include="*.ts" --include="*.html"
 
 Find any remaining cxone- prefixed components in templates:
 grep -r "<cxone-" --include="*.html"
