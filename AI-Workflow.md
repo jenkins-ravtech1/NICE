@@ -227,20 +227,23 @@ If needed, write in the chat **Do NOT design rollback strategies**
 4. Change status to **Approved**.
 5. **New chat.**
 6. `@dev implement-story`
-7. In the same chat, write the below prompt:
+7. In the same chat, write the below prompt (only applicable for stories that performed component migration):
 
        Perform a thorough search and confirm that all instances of the component have been fully migrated.
 
 8. Check in the story `.md` file that **all tasks are checked**.
-9. **New chat.**
-10. `@qa review-story`
-11. **IMPORTANT** Check that all unit tests passed successfully.
-12. **The status of the story must be Done** _OR_ write:
+9. **The status of the story must be Ready For Review** _OR_ write:
+
+       If the status of the story is Ready For Review, update it to Ready For Review.
+10. **New chat.**
+11. `@qa review-story`
+12. **IMPORTANT** Check that all unit tests passed successfully.
+13. **The status of the story must be Done** _OR_ write:
 
         If the status of the story is Done, update it to Done.
 
-13. **IMPORTANT** Commit your work before starting a new story.
-14. Go back to step 1 to start the next story.
+14. **IMPORTANT** Commit your work before starting a new story.
+15. Go back to step 1 to start the next story.
 
 ## Notes — Out of AI Scope
 
