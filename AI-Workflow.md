@@ -108,18 +108,29 @@ Requirements:
 2. Hard Replacement Rules
 
 Translation Module:
-REMOVE: import { TranslationModule } from '@niceltd/cxone-components/translation'
-REPLACE WITH: import { TranslationModule } from '@niceltd/cxone-core-services'
+- REMOVE: import { TranslationModule } from '@niceltd/cxone-components/translation'
+- REPLACE WITH: import { TranslationModule } from '@niceltd/cxone-core-services'
 
 Button Components:
-- ALL button elements must migrate: <button> → <sol-button>
+- ONLY migrate <button> elements that have class cxone-btn
+- ALL button elements with cxone-btn class must migrate: <button class="cxone-btn..."> → <sol-button>
 - Event handler: (click) → (buttonClick)
-  Before: <button (click)="handleClick()">
-  After: <sol-button (buttonClick)="handleClick()">
+  
+  Example:
+  <!-- Before -->
+  <button class="cxone-btn btn-medium btn-secondary btn-bg-is-white btn-clear-selected" 
+          (click)="clearSelectedColumns()" 
+          translate="automaticApprovalRuleConfig.tabs.netStaffing.conditions.clearSelectedButtonLabel">
+  </button>
+  
+  <!-- After -->
+  <sol-button (buttonClick)="clearSelectedColumns()" 
+              translate="automaticApprovalRuleConfig.tabs.netStaffing.conditions.clearSelectedButtonLabel">
+  </sol-button>
 
 Icon Components:
-REMOVE: <cxone-svg-sprite-icon>
-REPLACE WITH: <sol-icon> (NOT sol-svg-sprite-icon)
+- REMOVE: <cxone-svg-sprite-icon>
+- REPLACE WITH: <sol-icon> (NOT sol-svg-sprite-icon)
 - Update all inputs/attributes per SOL API documentation
 - Remove sprite-path assumptions
 
@@ -145,16 +156,16 @@ Update angular.json at path projects/<YOUR_APP>/architect/build/options/styles:
 4. Import Cleanup Requirements
 
 Alias Removal (MANDATORY):
-REMOVE aliases: import { CheckboxModule as SolCheckboxModule } from '@niceltd/sol/checkbox'
-USE direct imports: import { CheckboxModule } from '@niceltd/sol/checkbox'
+- REMOVE aliases: import { CheckboxModule as SolCheckboxModule } from '@niceltd/sol/checkbox'
+- USE direct imports: import { CheckboxModule } from '@niceltd/sol/checkbox'
 
 Package Cleanup - Remove from package.json and all code:
 - @niceltd/cxone-components
 - Any Breeze-specific dependencies
 
 Import Removal (MANDATORY):
-REMOVE: import { NavigationModule } from '@niceltd/cxone-domain-components/navigation'
-This import must be completely eliminated from all files
+- REMOVE: import { NavigationModule } from '@niceltd/cxone-domain-components/navigation'
+- This import must be completely eliminated from all files
 
 5. Testing Discipline
 - E2E tests: NO try/catch wrapping of Playwright locators
@@ -171,7 +182,7 @@ Pre-Migration:
 During Migration:
 - Component mapping table created and complete
 - All Breeze imports replaced
-- All button events updated to (buttonClick)
+- All button events with cxone-btn class updated to (buttonClick)
 - All icons migrated to <sol-icon>
 - Translation module source updated
 - Navigation module imports REMOVED
@@ -194,7 +205,10 @@ grep -r "@niceltd/cxone-components" --include="*.ts" --include="*.html"
 Find any remaining cxone- prefixed components in templates:
 grep -r "<cxone-" --include="*.html"
 
-Find any (click) events that should be (buttonClick):
+Find buttons with cxone-btn class that need migration:
+grep -r "button.*cxone-btn" --include="*.html"
+
+Find any (click) events on sol-button that should be (buttonClick):
 grep -r "sol-button.*\(click\)" --include="*.html"
 
 Find any remaining NavigationModule imports (MUST return zero results):
@@ -205,6 +219,7 @@ FINAL NOTES
 - No partial migrations: Components are either fully migrated or not touched
 - Backend is untouchable: Treat all backend services as black boxes with fixed contracts
 - NavigationModule elimination: This import must be completely removed from the codebase
+- Button migration scope: ONLY <button> elements with cxone-btn class require migration to <sol-button>
 - Documentation focus: The Component Mapping Table is the primary deliverable
 ```
 8. **New chat.**
