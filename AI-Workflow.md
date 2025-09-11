@@ -115,6 +115,7 @@ Button Components:
 - ONLY migrate <button> elements that have class cxone-btn
 - ALL button elements with cxone-btn class must migrate: <button class="cxone-btn..."> → <sol-button>
 - Event handler: (click) → (buttonClick)
+- Translation syntax: The translate directive MUST use the pipe syntax {{ 'key' | translate }} and NOT the attribute syntax translate="key"
   
   Example:
   <!-- Before -->
@@ -124,8 +125,8 @@ Button Components:
   </button>
   
   <!-- After -->
-  <sol-button (buttonClick)="clearSelectedColumns()" 
-              translate="automaticApprovalRuleConfig.tabs.netStaffing.conditions.clearSelectedButtonLabel">
+  <sol-button (buttonClick)="clearSelectedColumns()">
+    {{ 'automaticApprovalRuleConfig.tabs.netStaffing.conditions.clearSelectedButtonLabel' | translate }}
   </sol-button>
 
 Icon Components:
@@ -199,20 +200,22 @@ Post-Migration:
 SEARCH COMMANDS FOR VERIFICATION
 Use these to ensure complete migration:
 
-Find any remaining Breeze imports:
-grep -r "@niceltd/cxone-components" --include="*.ts" --include="*.html"
+Note: When running verification scripts, use Windows Command Prompt commands instead of Mac/Linux commands.
 
-Find any remaining cxone- prefixed components in templates:
-grep -r "<cxone-" --include="*.html"
+Find any remaining Breeze imports (Windows):
+findstr /s /i "@niceltd/cxone-components" *.ts *.html
 
-Find buttons with cxone-btn class that need migration:
-grep -r "button.*cxone-btn" --include="*.html"
+Find any remaining cxone- prefixed components in templates (Windows):
+findstr /s /i "<cxone-" *.html
 
-Find any (click) events on sol-button that should be (buttonClick):
-grep -r "sol-button.*\(click\)" --include="*.html"
+Find buttons with cxone-btn class that need migration (Windows):
+findstr /s /i "button.*cxone-btn" *.html
 
-Find any remaining NavigationModule imports (MUST return zero results):
-grep -r "NavigationModule.*@niceltd/cxone-domain-components/navigation" --include="*.ts"
+Find any (click) events on sol-button that should be (buttonClick) (Windows):
+findstr /s /i "sol-button.*(click)" *.html
+
+Find any remaining NavigationModule imports (MUST return zero results) (Windows):
+findstr /s /i "NavigationModule.*@niceltd/cxone-domain-components/navigation" *.ts
 
 FINAL NOTES
 - Completeness is critical: Every single Breeze component must be accounted for
