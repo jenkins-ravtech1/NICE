@@ -14,9 +14,12 @@ Run the app, the unit tests and the e2e to check if all works well.
 ```
 "@niceltd/cxone-domain-components": "^30.3.0",
 "@niceltd/cxone-client-platform-services": "^33.5.0",
-"@niceltd/cxone-core-services": "^27.7.0",
-"cxone-admin-library-components": "8.90.0"
+"@niceltd/cxone-core-services": "^27.7.0"
 ```
+If you have the 
+```cxone-admin-library-components```
+library installed, it must be at least version 8.90.0.
+
 4. In your app repo, run: `npx bmad-method install`
 
 Installer Choices:
