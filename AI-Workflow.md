@@ -67,6 +67,12 @@ Angular MFE Migration: Breeze to SOL Components
 PROJECT OVERVIEW
 Objective: Complete migration of the current Angular Micro Frontend (MFE) application from Breeze component library to SOL component library.
 
+FILE ORGANIZATION
+All migration documentation and internal files created during this migration process MUST be stored in the docs folder:
+- Component Mapping Table: docs/component-mapping-table.md
+- Migration notes: docs/migration-notes.md
+- Any other migration artifacts: docs/[appropriate-filename]
+
 CRITICAL PREREQUISITES
 Before writing ANY code, you MUST:
 1. Read and analyze the sol-components folder (located in the root project folder) containing official migration documentation
@@ -146,13 +152,17 @@ import { ToastrManagerModule } from '@niceltd/sol/toastr';
 Spinner Components:
 If you need a spinner that turns on and off automatically when network requests start and finish, you should use the App Spinner in the CXone Domain Components.
 
-3. Style Configuration
+3. Style Configuration (PRIORITY: Complete in First Story/Sprint)
+IMPORTANT: This step MUST be completed at the beginning of the development process as the first story of the migration.
+
 Update angular.json at path projects/<YOUR_APP>/architect/build/options/styles:
 "styles": [
   "node_modules/@niceltd/sol/src/styles/typefaces.css",
   "node_modules/@niceltd/sol/src/styles/sol-core.scss",
   ... other styles
 ]
+
+Note: Completing this configuration first ensures all subsequent component migrations render correctly with SOL styles.
 
 4. Import Cleanup Requirements
 
@@ -178,6 +188,8 @@ VERIFICATION CHECKLIST
 Pre-Migration:
 - sol-components folder documentation reviewed
 - Sol-Migration-Notes folder analyzed
+- docs folder created for migration artifacts
+- Angular.json styles configuration updated (FIRST STORY)
 - All Breeze components identified and mapped
 
 During Migration:
