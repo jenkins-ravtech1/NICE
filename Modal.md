@@ -1,50 +1,162 @@
----
-title: Modal
----
+# Sol Modal Migration Guide
 
-# General Changes
+## General Changes
 
-- **Dialog Libraries**:
+### Dialog Library Migration
 
-  In component.ts replace the following:
+In `component.ts`, replace the following imports and services:
 
-  - `DynamicDialogConfig` -> `MAT_DIALOG_DATA` from angular-material
-  - `DynamicDialogRef` and `DialogService` -> `ModalService` from sol
+**Before (PrimeNG):**
+- `DynamicDialogConfig` 
+- `DynamicDialogRef`
+- `DialogService`
 
-- In the constructor replace to:
+**After (Sol):**
+- `MAT_DIALOG_DATA` from Angular Material
+- `ModalService` from Sol
 
-  ```typescript
+### Constructor Update
+
+Replace the constructor with:
+
+```typescript
+constructor(
+    private modalService: ModalService,
+    @Inject(MAT_DIALOG_DATA) public data: DataTypeExample
+) { }
+```
+
+### Property Changes
+
+**Remove Height Property:** The `ModalService` does not support the `height` property, so remove it if it exists.
+
+### Modal Implementation
+
+When calling the modal, subscribe to the reference:
+
+```typescript
+const ref = this.modalService.open(ModalComponent, {
+    width: '600px',
+    data: {}
+});
+
+ref.subscribe((param: boolean) => {
+    // Your code here
+});
+```
+
+## Message Modal
+
+Since Sol does not have a native message modal, a custom `MessageModalComponent` was created to maintain similar functionality.
+
+### Implementation Options
+
+#### Option 1: Multiple Instances
+
+If you have **multiple** instances of the message modal within your application, use the following component:
+
+```typescript
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ModalService } from '@niceltd/sol/modal';
+
+interface MessageModalData {
+  title?: string;
+  message?: string;
+  warnButtonLabel?: string;
+  basicButtonLabel?: string;
+  primaryButtonLabel?: string;
+  type?: string;
+  allowClose?: boolean;
+}
+
+@Component({
+  template: `
+     <sol-modal
+      class="sol-message-modal"
+      [title]="modalData?.title ?? ''"
+      [message]="modalData?.message ?? ''"
+      [basicButtonLabel]="modalData?.basicButtonLabel ?? ''"
+      [primaryButtonLabel]="modalData?.primaryButtonLabel ?? ''"
+      [warnButtonLabel]="modalData?.warnButtonLabel ?? ''"
+      [type]="modalData?.type ?? ''"
+      [allowClose]="modalData?.allowClose ?? true"
+      (dismissed)="onDismiss()"
+      (closed)="onClose()"
+    ></sol-modal>
+  `
+})
+export class MessageModalComponent {
+  modalData: MessageModalData;
+  
   constructor(
-      private modalService: ModalService,
-      @Inject(MAT_DIALOG_DATA) public data: DataTypeExample
-  ) { }
-  ```
+    private modalService: ModalService,
+    @Inject(MAT_DIALOG_DATA) data: MessageModalData
+  ) {
+    this.modalData = data;
+  }
+  
+  onDismiss() {
+    this.modalService.close(false);
+  }
+  
+  onClose() {
+    this.modalService.close(true);
+  }
+}
+```
 
-- **Height Property**:
-  Remove `height` property if it exists, because the `ModalService` does not support it.
+#### Option 2: Single Instance
 
-- In the function that call to the modal Subscribe from the ref.
+If there is **only one** instance, implement with a template reference:
 
-  ```typescript
-  const ref = this.modalService.open(ModalComponent, {
-      width: '600px',
-      data: {}
-  });
+**Template:**
+```html
+<ng-template #dialogRef>
+  <sol-modal
+    [title]="'Standard Modal'"
+    [primaryButtonLabel]="'Confirm'"
+    [basicButtonLabel]="'Cancel'"
+    (closed)="onClose()"
+    (dismissed)="onDismiss()"
+  >
+    <sol-modal-body>
+      <p class="common-text">Content inside templateRef.</p>
+    </sol-modal-body>
+  </sol-modal>
+</ng-template>
+<sol-button (click)="openTemplateRef()">Open TemplateRef</sol-button>
+```
 
-  ref.subscribe((param: boolean) => {
-      ...Your code
-  });
-  ```
+**Component:**
+```typescript
+class LaunchTemplateRefComponent {
+  @ViewChild('dialogRef')
+  dialogRef!: TemplateRef<any>;
 
-# Message Modal
+  constructor(private solModalService: ModalService) {}
 
-- Since Sol does not have a native message modal, a custom
-  `MessageModalComponent` was created to maintain similar
-  functionality.
-  You can copy-paste it from this link:
-  <https://github.com/nice-cxone/cxone-webapp-intraday/tree/CXWFM-53723-sol-migration/src/app/intraday-manager/components/message-modal>
+  openTemplateRef() {
+    this.solModalService.open(this.dialogRef, {
+      width: '420px'
+    });
+  }
 
-**Note:** Use this **only if you have multiple** instances of the
-message modal within your application. **If there is only one**
-instance, apply with a template as shown here:
-<https://na1.dev.nice-incontact.com/sol/?path=/docs/components-modal-overview--docs#custom-modal>.
+  onDismiss() {
+    this.solModalService.close(false);
+    console.log('modal dismissed');
+  }
+  
+  onClose() {
+    this.solModalService.close(true);
+    console.log('modal closed');
+  }
+}
+```
+
+## Key Takeaways
+
+- Replace PrimeNG dialog services with Sol's `ModalService`
+- Update constructor to use Angular Material's `MAT_DIALOG_DATA`
+- Remove unsupported `height` property
+- Choose appropriate message modal implementation based on usage frequency
