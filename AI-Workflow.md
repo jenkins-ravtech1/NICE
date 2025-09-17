@@ -284,11 +284,11 @@ If needed, write in the chat **Do NOT design rollback strategies**
 ## Development Workflow (IDE Only)
 
 1. **New chat.**
-2. `@sm create-next-story`
+2. `@sm create-next-story` (optional, type the story number, for example `@sm create-next-story 2.1`)
 3. READ the story content.
 4. Change status to **Approved**.
 5. **New chat.**
-6. `@dev implement-story`
+6. `@dev implement-story` (optional, type the story number, for example `@dev implement-story 2.1`)
 7. In the same chat, write the below prompt (only applicable for stories that performed component migration):
 
        Perform a thorough search and confirm that all instances of the component have been fully migrated.
@@ -298,7 +298,7 @@ If needed, write in the chat **Do NOT design rollback strategies**
 
        If the status of the story is Ready For Review, update it to Ready For Review.
 10. **New chat.**
-11. `@qa review-story`
+11. `@qa review-story` (optional, type the story number, for example `@qa review-story 2.1`)
 12. **IMPORTANT** Check that all unit tests passed successfully.
 13. **The status of the story must be Done** _OR_ write:
 
