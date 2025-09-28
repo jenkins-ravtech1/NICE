@@ -10,7 +10,7 @@ Run the app, the unit tests and the e2e to check if all works well.
    - sol-components: https://github.com/nice-cxone/sol-components.git  
    - Sol-Migration-Notes: https://github.com/jenkins-ravtech1/Sol-Migration-Notes.git
 2. In VS Code, open your application folder. Then click on Add Folder to Workspace and select the two other folders. After that, you can save the workspace to your disk (make sure to save it alongside your application folder, not inside it).
-3. Check if in your package.json these libraries have updated to at least the below versions:
+3. Check if in your package.json these libraries have updated to **at least** the below versions:
 ```
 "@niceltd/cxone-domain-components": "^30.3.0",
 "@niceltd/cxone-client-platform-services": "^33.5.0",
@@ -68,15 +68,12 @@ PROJECT OVERVIEW
 Objective: Complete migration of the current Angular Micro Frontend (MFE) application from Breeze component library to SOL component library.
 
 FILE ORGANIZATION
-All migration documentation and internal files created during this migration process MUST be stored in the docs folder:
-- Component Mapping Table: docs/component-mapping-table.md
-- Migration notes: docs/migration-notes.md
-- Any other migration artifacts: docs/[appropriate-filename]
+All migration documentation and internal files created during this migration process MUST be stored in the docs folder.
 
 CRITICAL PREREQUISITES
 Before writing ANY code, you MUST:
-1. Read and analyze the sol-components folder (located in the root project folder) containing official migration documentation
-2. Study thoroughly the Sol-Migration-Notes folder (located in the root project folder) containing developer notes, decisions, and gotchas from previous manual SOL migrations
+1. Study thoroughly the sol-components folder (located in the root project folder) containing official migration documentation
+2. Study thoroughly the Sol-Migration-Notes folder (located in the root project folder)mcontaining several markdown (.md) files documenting developer notes, migration decisions, pitfalls, and component-specific patterns from previous manual SOL migrations. Note that these files do not cover the full list of SOL components — only a subset. Exception: Do NOT read AI-Workflow.md
 
 SCOPE & BOUNDARIES
 
@@ -89,6 +86,7 @@ IN SCOPE:
 OUT OF SCOPE (STRICT):
 - Backend services, APIs, endpoints, DTOs, auth flows, or infrastructure
 - New features, enhancements, or functionality additions
+- You must NEVER introduce components that did not exist in the original codebase
 - New test coverage beyond migration-required updates
 - Performance optimization beyond SOL's built-in improvements
 - Rollback strategies, feature flags, or dual-running modes
@@ -99,102 +97,36 @@ INVARIANTS (DO NOT MODIFY)
 1. Module Federation architecture must remain unchanged
 2. Backend APIs treated as fixed external contracts
 3. Business logic preservation required
+4. Component count must remain the same - no new components should be created
 
 MIGRATION RULES & REQUIREMENTS
 
 1. Component Mapping Documentation
-Create a comprehensive Component Mapping Table in Markdown format:
-
-| Breeze Component | SOL Replacement | Inputs (old → new) | Outputs/Events (old → new) | Template Changes (concise snippet) | Test Impact (selectors/flows) | Complexity (L/M/H) |
+Create a detailed Component Mapping Table in Markdown with the following columns: Breeze Component | SOL Replacement | Complexity (L/M/H)
+This step is MANDATORY and must be included in the brief.md file during the create-project-brief phase
 
 Requirements:
 - MUST include ALL cxone components affected by migration
 - MUST verify completeness - no Breeze component can be missed
+- MUST follow patterns documented in sol-components AND Sol-Migration-Notes repositories
+- MUST NOT introduce any new components that didn't exist in the original codebase
 
-2. Hard Replacement Rules
-
-Translation Module:
-- REMOVE: import { TranslationModule } from '@niceltd/cxone-components/translation'
-- REPLACE WITH: import { TranslationModule } from '@niceltd/cxone-core-services'
-
-Button Components:
-- ONLY migrate <button> elements that have class cxone-btn
-- ALL button elements with cxone-btn class must migrate: <button class="cxone-btn..."> → <sol-button>
-- Event handler: (click) → (buttonClick)
-- Translation syntax: The translate directive MUST use the pipe syntax {{ 'key' | translate }} and NOT the attribute syntax translate="key"
-- Icon handling: If a cxone-btn contains an icon element, the icon becomes a parameter in sol-button using the [icon] input
-
-  Icon Migration Pattern:
-  - Icons inside buttons are NOT separate elements in SOL
-  - Use the [icon] input property with an object containing icon path and className
-  - Format: [icon]="{icon: spritePath + '#icon-name', className: 'icon-class'}"
-  
-  Example with text only:
-  <!-- Before -->
-  <button class="cxone-btn btn-medium btn-secondary" 
-          (click)="clearSelectedColumns()" 
-          translate="automaticApprovalRuleConfig.clearSelectedButtonLabel">
-  </button>
-  
-  <!-- After -->
-  <sol-button (buttonClick)="clearSelectedColumns()">
-    {{ 'automaticApprovalRuleConfig.clearSelectedButtonLabel' | translate }}
-  </sol-button>
-
-  Example with icon:
-  <!-- Before -->
-  <button container="body" #moreActions="bs-popover"
-          containerClass="role-popovers cxone-tooltip-container cxone-popover" placement="bottom"
-          outsideClick="true" class="cxone-btn btn btn-secondary btn-default-my-schedule more more-settings-button"
-          [popover]="moreSettings" [disabled]="initiateScheduleData.isDirtyMode"
-          [attr.aria-label]="'mySchedule.actionButton' | translate">
-    <cxone-svg-sprite-icon iconName="icon-more" [spritePath]="spritePath" wrapperClass="more-icon">
-    </cxone-svg-sprite-icon>
-  </button>
-
-  <!-- After -->
-  <sol-button container="body" #moreActions="bs-popover"
-              containerClass="role-popovers cxone-tooltip-container cxone-popover" placement="bottom"
-              outsideClick="true" variant="basic"
-              [popover]="moreSettings" [disabled]="initiateScheduleData.isDirtyMode"
-              [ariaLabel]="'mySchedule.actionButton' | translate" 
-              [icon]="{icon: spritePath + '#icon-more', className: 'more-icon'}">
-  </sol-button>
-
-  Key changes for buttons with icons:
-  - Remove nested <cxone-svg-sprite-icon> element
-  - Add [icon] input with object containing icon path and className
-  - Convert [attr.aria-label] to [ariaLabel]
-  - Maintain all other attributes and bindings
-
-Icon Components:
-- REMOVE: <cxone-svg-sprite-icon>
-- REPLACE WITH: <sol-icon> (NOT sol-svg-sprite-icon)
-- Update all inputs/attributes per SOL API documentation
-- Remove sprite-path assumptions
-
-Dropdown Components:
-- Single-Select Breeze → SOL Dropdown with appropriate configuration
-- Multi-Select Breeze → SOL Dropdown with multi-select enabled
-- Map all inputs/outputs correctly
-
-Toaster Service:
-import { ToastrManagerModule } from '@niceltd/sol/toastr';
-
-Spinner Components:
-If you need a spinner that turns on and off automatically when network requests start and finish, you should use the App Spinner in the CXone Domain Components.
+2. Component-Specific Migration Patterns
+ALWAYS consult the sol-components and the Sol-migration-notes repositories for:
+- Detailed migration patterns for each component type
+- Before/After code examples
+- Edge cases and gotchas
+- Specific rules for each SOL component
 
 3. Style Configuration (PRIORITY: Complete in First Story/Sprint)
-IMPORTANT: This step MUST be completed at the beginning of the development process as the first story of the migration.
+IMPORTANT: This step MUST be completed at the beginning of the development process as the first story of the migration
 
-Update angular.json at path projects/<YOUR_APP>/architect/build/options/styles:
+Update angular.json at path projects/YOUR_APP/architect/build/options/styles:
 "styles": [
   "node_modules/@niceltd/sol/src/styles/typefaces.css",
   "node_modules/@niceltd/sol/src/styles/sol-core.scss",
   ... other styles
 ]
-
-Note: Completing this configuration first ensures all subsequent component migrations render correctly with SOL styles.
 
 4. Import Cleanup Requirements
 
@@ -205,6 +137,7 @@ Alias Removal (MANDATORY):
 Package Cleanup - Remove from package.json and all code:
 - @niceltd/cxone-components
 - Any Breeze-specific dependencies
+- IMPORTANT: If there are Tagify or Tiles Breeze component, don't remove the @niceltd/cxone-components because there components have not equivalent in SOL
 
 Import Removal (MANDATORY):
 - REMOVE: import { NavigationModule } from '@niceltd/cxone-domain-components/navigation'
@@ -219,55 +152,56 @@ VERIFICATION CHECKLIST
 
 Pre-Migration:
 - sol-components folder documentation reviewed
-- Sol-Migration-Notes folder analyzed
-- docs folder created for migration artifacts
+- Sol-Migration-Notes folder and ALL its markdown files analyzed
 - Angular.json styles configuration updated (FIRST STORY)
 - All Breeze components identified and mapped
+- Verified no new components will be added
 
 During Migration:
 - Component mapping table created and complete
-- All Breeze imports replaced
-- All button events with cxone-btn class updated to (buttonClick)
-- All icons migrated to <sol-icon>
+- All Breeze imports replaced following the sol-components repository and Sol-Migration-Notes guidelines
+- All migrations follow patterns documented in sol-components repository and Sol-Migration-Notes markdown files
 - Translation module source updated
 - Navigation module imports REMOVED
 - Styles configuration updated in angular.json
 - Import aliases removed
+- No new components introduced
 
 Post-Migration:
-- ZERO imports from @niceltd/cxone-components (perform exhaustive search)
-- ZERO NavigationModule imports from @niceltd/cxone-domain-components/navigation
+- ZERO imports from @niceltd/cxone-components (perform an exhaustive search), except for the Tiles and Tagify components.- ZERO NavigationModule imports from @niceltd/cxone-domain-components/navigation
 - All tests updated and passing
 - No Breeze components remaining in codebase
 - Package.json cleaned of deprecated dependencies
+- All sol-components repository guidelines and Sol-Migration-Notes guidelines followed completely
+- Component count remains the same as before migration
 
 SEARCH COMMANDS FOR VERIFICATION
-Use these to ensure complete migration:
+Use these to ensure complete migration (Windows Command Prompt):
 
-Note: When running verification scripts, use Windows Command Prompt commands instead of Mac/Linux commands.
-
-Find any remaining Breeze imports (Windows):
+Find any remaining Breeze imports:
 findstr /s /i "@niceltd/cxone-components" *.ts *.html
 
-Find any remaining cxone- prefixed components in templates (Windows):
+Find any remaining cxone- prefixed components in templates:
 findstr /s /i "<cxone-" *.html
 
-Find buttons with cxone-btn class that need migration (Windows):
+Find buttons with cxone-btn class that need migration:
 findstr /s /i "button.*cxone-btn" *.html
 
-Find any (click) events on sol-button that should be (buttonClick) (Windows):
+Find any (click) events on sol-button that should be (buttonClick):
 findstr /s /i "sol-button.*(click)" *.html
 
-Find any remaining NavigationModule imports (MUST return zero results) (Windows):
+Find any remaining NavigationModule imports (MUST return zero results):
 findstr /s /i "NavigationModule.*@niceltd/cxone-domain-components/navigation" *.ts
 
 FINAL NOTES
+- Documentation is key: Always refer to the sol-components and Sol-Migration-Notes repositories.
 - Completeness is critical: Every single Breeze component must be accounted for
+- No new components: The migration should ONLY replace existing components, never add new ones
 - No partial migrations: Components are either fully migrated or not touched
 - Backend is untouchable: Treat all backend services as black boxes with fixed contracts
 - NavigationModule elimination: This import must be completely removed from the codebase
-- Button migration scope: ONLY <button> elements with cxone-btn class require migration to <sol-button>
-- Documentation focus: The Component Mapping Table is the primary deliverable
+- Button migration scope: ONLY button elements with cxone-btn class require migration to sol-button
+- Documentation focus: The Component Mapping Table, the sol-components repository and Sol-Migration-Notes guidelines are the primary references
 ```
 8. **New chat.**
 9. `@pm create-doc prd`

@@ -3,7 +3,6 @@
 ## Migration Rules
 
 ### Core Migration Principles
-
 - **REMOVE:** `<cxone-svg-sprite-icon>`
 - **REPLACE WITH:** `<sol-icon>` (NOT `sol-svg-sprite-icon`)
 - Update all inputs/attributes per SOL API documentation
@@ -11,7 +10,7 @@
 
 ### Migration Pattern
 
-**Before:**
+**Before (Breeze):**
 ```html
 <cxone-svg-sprite-icon 
   iconName="icon-name" 
@@ -20,23 +19,24 @@
 </cxone-svg-sprite-icon>
 ```
 
-**After:**
+**After (SOL):**
 ```html
 <sol-icon 
   [icon]="'icon-name'" 
-  [class]="'custom-class'">
+  [className]="'custom-class'">
 </sol-icon>
 ```
 
 ### Key Changes
-
 - Component name: `cxone-svg-sprite-icon` → `sol-icon`
 - Icon reference: `iconName` attribute → `[icon]` input
 - Sprite path handling: Remove `[spritePath]` - SOL handles this internally
-- CSS classes: `wrapperClass` → standard `[class]` or `class` attribute
+- CSS classes: 
+  - **Breeze:** `wrapperClass` attribute
+  - **SOL:** `[className]` input (NOT `class` or `[class]`)
 
 ### Important Notes
-
 - Do NOT use `sol-svg-sprite-icon` - the correct component is `sol-icon`
 - Sprite path management is handled internally by SOL components
+- **Class attribute:** Use `[className]` for SOL (different from standard HTML `class` attribute)
 - Consult SOL API documentation for additional icon properties and configurations
